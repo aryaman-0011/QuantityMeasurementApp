@@ -97,21 +97,24 @@ Example:
 
 ---
 
-### 📅 UC6 : Length Unit Conversion API (UC5 → UC6 Enhancement)
+### 📅 UC6: Addition of Two Length Units (Same Category)
 
-- Extended Length class to provide explicit conversion between any supported units (FEET, INCHES, YARDS, CENTIMETERS).
-- Introduced:
-  - Length.convert(value, sourceUnit, targetUnit) – static method for raw numeric conversion.
-  - length.convertTo(targetUnit) – instance method to convert an existing Length object.
-  - Input validation ensures null, NaN, and infinite values are handled safely.
-  - Maintains DRY principle, immutability, and backward compatibility with UC1–UC5.
-- Key Concepts:
-  - Cross-unit conversion via base-unit normalization
-  - Enum-based type-safe conversion factors
-  - Precision handling using epsilon tolerance
-  - Overloaded conversion methods for flexible API usage
+- Enables addition of two lengths in the same measurement category (length), returning the result in the unit of the first operand. Supports same-unit and cross-unit additions with automatic conversion and preserves immutability.
+- Key Concepts
+  - Same-unit and cross-unit addition
+  - Conversion to target unit (first operand)
+  - Validation for nulls, zero, negative, NaN, and infinite values
+  - Commutativity: add(A, B) = add(B, A)
+  - Floating-point precision handling
 
-[UC6-Length Unit Conversion](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC6-UnitAddition/src)
+Example:
+  - Input: 1.0 ft + 2.0 ft → Output: 3.0 ft
+  - Input: 1.0 ft + 12.0 in → Output: 2.0 ft
+  - Input: 12.0 in + 1.0 ft → Output: 24.0 in
+  - Input: 1.0 yd + 3.0 ft → Output: 2.0 yd
+  - Input: 2.54 cm + 1.0 in → Output: ~5.08 cm
+
+[UC6-Addition of Length Units](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC6-UnitAddition/src)
 
 ---
 
@@ -126,10 +129,34 @@ Example:
   - Floating-point precision handling across units
 
 Example:
-Input: 1.0 ft + 12.0 in → Target Unit: FEET → Output: 2.0 ft
-Input: 1.0 ft + 12.0 in → Target Unit: INCHES → Output: 24.0 in
-Input: 1.0 ft + 12.0 in → Target Unit: YARDS → Output: ~0.667 yd
-Input: 1.0 yd + 3.0 ft → Target Unit: YARDS → Output: 2.0 yd
-Input: 36.0 in + 1.0 yd → Target Unit: FEET → Output: 6.0 ft
+  - Input: 1.0 ft + 12.0 in → Target Unit: FEET → Output: 2.0 ft
+  - Input: 1.0 ft + 12.0 in → Target Unit: INCHES → Output: 24.0 in
+  - Input: 1.0 ft + 12.0 in → Target Unit: YARDS → Output: ~0.667 yd
+  - Input: 1.0 yd + 3.0 ft → Target Unit: YARDS → Output: 2.0 yd
+  - Input: 36.0 in + 1.0 yd → Target Unit: FEET → Output: 6.0 ft
 
 [UC7-Target Unit Specification](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC7-TargetUnitAddition/src)
+
+---
+
+### 📅 UC8: Refactoring Unit Enum to Standalone with Conversion Responsibility
+
+- Refactors the design by extracting LengthUnit from QuantityLength into a standalone enum that handles all unit conversions. This improves cohesion, reduces coupling, eliminates circular dependencies, and establishes a scalable pattern for future measurement categories (weight, volume, etc.).
+- Key Concepts
+  - Standalone LengthUnit enum with conversion responsibility
+  - QuantityLength simplified: focuses on equality and arithmetic
+  - Conversion methods: convertToBaseUnit() and convertFromBaseUnit()
+  - Backward compatible: all UC1–UC7 operations continue to work
+  - Supports future measurement categories using the same pattern
+  - Maintains immutability, type safety, and thread-safety
+
+Example:
+  - Input: Quantity(1.0, FEET).convertTo(INCHES) → Output: Quantity(12.0, INCHES)
+  - Input: Quantity(1.0, FEET).add(Quantity(12.0, INCHES), FEET) → Output: Quantity(2.0, FEET)
+  - Input: Quantity(36.0, INCHES).equals(Quantity(1.0, YARDS)) → Output: true
+  - Input: Quantity(2.54, CENTIMETERS).convertTo(INCHES) → Output: Quantity(~1.0, INCHES)
+  - Input: LengthUnit.INCHES.convertToBaseUnit(12.0) → Output: 1.0 (feet)
+
+[UC8-Refactoring Unit](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC8-StandaloneUnit/src)
+
+---
