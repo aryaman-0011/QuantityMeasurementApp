@@ -1,4 +1,4 @@
-#QuantityMeasurementApp
+# QuantityMeasurementApp
 
 ### 📅 UC1 : Feet Measurement Equality
 
@@ -11,7 +11,8 @@
   - Encapsulation and immutability
 
 Example:
-Input: 1.0 ft and 1.0 ft
-Output: true
+- Input: 1.0 ft and 1.0 ft
+- Output: true
 
 [UC1-FeetEquality](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC1-FeetEquality/src)
+
