@@ -103,3 +103,15 @@
 [UC8-StandaloneUnit](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC8-StandaloneUnit)
 
 ---
+### 📅 UC9 : WeightMeasurement 
+(21-02-2026)
+
+- Introduces a new **Weight** measurement category supporting kilogram, gram, and pound units.  
+- Implements equality, conversion, and addition operations similar to the Length design.  
+- Uses a standalone **WeightUnit** enum responsible for conversion to and from the base unit (kilogram).  
+- Ensures immutability, validation, and precision while maintaining category type safety (weight ≠ length).  
+- Demonstrates scalability and reusability of the architecture for multiple measurement categories.  
+
+[UC9-WeightMeasurement](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC9-WeightMeasurement)
+
+---
