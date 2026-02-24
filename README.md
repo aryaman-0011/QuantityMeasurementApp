@@ -170,6 +170,17 @@
 [UC13-CentralizedArithmetic](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC13-CentralizedArithmetic) 
 
 ---
+### 📅 UC14: TemperatureMeasurement
+(23-02-2026)
 
+- Added **TemperatureUnit** (Celsius, Fahrenheit, Kelvin) with conversion support.  
+- Refactored **IMeasurable**: arithmetic operations optional via **default methods**.  
+- Introduced **SupportsArithmetic** interface; lambdas indicate supported operations.  
+- Temperature supports **equality & conversion**; unsupported arithmetic throws exceptions.  
+- **Quantity<U>** checks operation support before execution.  
+- Maintains **cross-category type safety** and backward compatibility with UC1–UC13.  
+- Follows **SOLID principles**, enabling scalable future measurement types.  
+
+[UC14-TemperatureMeasurement](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC14-TemperatureMeasurement) 
 
 
