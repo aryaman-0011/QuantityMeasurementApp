@@ -1,3 +1,7 @@
+# QuantityMeasurementApp
+
+---
+
 ### 📅 UC1 : Feet Measurement Equality
 (17-02-2026)
 
@@ -115,3 +119,18 @@
 [UC9-WeightMeasurement](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC9-WeightMeasurement)
 
 ---
+### 📅 UC10 : GenericQuantity
+(21-02-2026)
+
+- Refactors the design into a single generic **Quantity<U extends IMeasurable>** class to eliminate duplication across categories.  
+- Introduces a common **IMeasurable** interface implemented by all unit enums (LengthUnit, WeightUnit).  
+- Removes parallel QuantityLength and QuantityWeight classes, enforcing DRY and Single Responsibility principles.  
+- Ensures type safety using generics while preventing cross-category comparison (length ≠ weight).  
+- Establishes a scalable architecture where adding a new category only requires a new enum implementing **IMeasurable**, with no changes to the core Quantity class.  
+
+[UC10-GenericQuantity](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC10-GenericQuantity)
+
+---
+
+
+
