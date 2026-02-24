@@ -152,7 +152,24 @@
 - Ensures **immutability, validation, and type safety** across categories.  
 - Maintains consistency with equality, conversion, and addition.  
 
-[UC12-SubtractionDivision](https://github.com/yukta-choudhary/QuantityMeasurementApp/tree/feature/UC12-SubtractionDivision/src)  
+[UC12-SubtractionDivision](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC12-SubtractionDivision)  
 
 ---
+### 📅 UC13: CentralizedArithmetic
+(23-02-2026)
+
+- **Refactored arithmetic operations** (add, subtract, divide) to remove code duplication.  
+- Introduced a **centralized private helper** for validation, base-unit conversion, and operation execution.  
+- Created **ArithmeticOperation enum** (ADD, SUBTRACT, DIVIDE) to cleanly handle operations.  
+- Ensures **consistent error handling**, type checks, and immutability across all operations.  
+- Public API remains **unchanged**; all UC12 behaviors preserved.  
+- Improves **maintainability, readability, and scalability** for future operations (multiplication, modulo, etc.).  
+- Demonstration in QuantityMeasurementApp works exactly as before; results unchanged.  
+
+
+[UC13-CentralizedArithmetic](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC13-CentralizedArithmetic) 
+
+---
+
+
 
