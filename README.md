@@ -131,6 +131,17 @@
 [UC10-GenericQuantity](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC10-GenericQuantity)
 
 ---
+### 📅 UC11 : VolumeEquality
+(23-02-2026)
 
+- Adds **Volume measurement support** (Litre, Millilitre, Gallon) using the generic **Quantity<U>** class and **IMeasurable** interface without modifying existing architecture.  
+- Implements a new **VolumeUnit enum** with litre as the base unit and accurate conversion factors for seamless cross-unit operations.  
+- Supports **equality comparison, unit conversion, and addition** for volume measurements similar to length and weight categories.  
+- Ensures **type safety and category isolation**, preventing comparisons between volume, length, and weight measurements.  
+- Validates the **scalability and reusability** of the generic design by adding a third category with minimal effort, proving DRY and extensibility.  
+
+[UC11-VolumeMeasurement](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC11-VolumeEquality) 
+
+---
 
 
