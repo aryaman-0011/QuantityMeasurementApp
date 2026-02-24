@@ -91,3 +91,15 @@
 [UC7-TargetUnitAddition](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC7-TargetUnitAddition)
 
 ---
+### 📅 UC8 : StandaloneUnit
+(21-02-2026)
+
+- Refactors **LengthUnit** enum into a standalone top-level class to improve design and scalability.  
+- Assigns full responsibility of unit conversion (to and from base unit) to the **LengthUnit** enum.  
+- Simplifies **QuantityLength** by delegating conversion logic, focusing only on comparison and arithmetic.  
+- Maintains backward compatibility; all features from UC1–UC7 work without modifying client code.  
+- Demonstrates principles like Single Responsibility, low coupling, high cohesion, and scalable architecture for future measurement categories.  
+
+[UC8-StandaloneUnit](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC8-StandaloneUnit)
+
+---
