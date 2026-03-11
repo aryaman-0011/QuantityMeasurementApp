@@ -1,4 +1,6 @@
-package com.quantitymeasurementapp;
+package com.quantitymeasurementapp.units;
+
+import com.quantitymeasurementapp.interfaces.IMeasurable;
 
 public enum WeightUnit implements IMeasurable {
 
