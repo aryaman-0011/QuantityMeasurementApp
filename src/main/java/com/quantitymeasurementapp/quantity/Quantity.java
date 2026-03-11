@@ -143,14 +143,16 @@ public final class Quantity<U extends IMeasurable> {
 		if (this == obj)
 			return true;
 
-		if (!(obj instanceof Quantity<?> other))
+		if (!(obj instanceof Quantity<?>))
 			return false;
+
+		Quantity<?> other = (Quantity<?>) obj;
 
 		if (!this.unit.getClass().equals(other.unit.getClass()))
 			return false;
 
 		double baseThis = this.unit.convertToBaseUnit(this.value);
-		double baseOther = other.unit.convertToBaseUnit(other.value);
+		double baseOther = ((IMeasurable) other.unit).convertToBaseUnit(other.value);
 
 		return Math.abs(baseThis - baseOther) < EPSILON;
 	}

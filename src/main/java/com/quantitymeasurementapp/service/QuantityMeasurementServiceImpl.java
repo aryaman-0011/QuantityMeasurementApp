@@ -188,7 +188,10 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
 		try {
 
-			return quantity1.equals(quantity2);
+			double base1 = quantity1.getUnit().convertToBaseUnit(quantity1.getValue());
+			double base2 = quantity2.getUnit().convertToBaseUnit(quantity2.getValue());
+
+			return Math.abs(base1 - base2) < 0.0001;
 
 		} catch (Exception e) {
 			throw new QuantityMeasurementException(e.getMessage());
