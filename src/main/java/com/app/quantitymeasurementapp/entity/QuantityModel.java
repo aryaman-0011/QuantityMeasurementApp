@@ -1,4 +1,4 @@
-package com.quantitymeasurementapp.model;
+package com.app.quantitymeasurementapp.entity;
 
 public class QuantityModel {
 

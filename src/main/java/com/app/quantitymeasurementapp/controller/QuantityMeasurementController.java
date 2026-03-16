@@ -1,7 +1,7 @@
-package com.quantitymeasurementapp.controller;
+package com.app.quantitymeasurementapp.controller;
 
-import com.quantitymeasurementapp.dto.QuantityDTO;
-import com.quantitymeasurementapp.service.IQuantityMeasurementService;
+import com.app.quantitymeasurementapp.entity.QuantityDTO;
+import com.app.quantitymeasurementapp.service.IQuantityMeasurementService;
 
 public class QuantityMeasurementController {
 

@@ -1,9 +1,9 @@
-package com.quantitymeasurementapp.repository;
+package com.app.quantitymeasurementapp.repository;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.quantitymeasurementapp.entity.QuantityMeasurementEntity;
+import com.app.quantitymeasurementapp.entity.QuantityMeasurementEntity;
 
 public class QuantityMeasurementCacheRepository implements IQuantityMeasurementRepository {
 

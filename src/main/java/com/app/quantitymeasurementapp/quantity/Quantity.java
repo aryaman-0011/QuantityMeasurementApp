@@ -1,8 +1,8 @@
-package com.quantitymeasurementapp.quantity;
+package com.app.quantitymeasurementapp.quantity;
 
 import java.util.Objects;
 
-import com.quantitymeasurementapp.interfaces.IMeasurable;
+import com.app.quantitymeasurementapp.unit.IMeasurable;
 
 public final class Quantity<U extends IMeasurable> {
 

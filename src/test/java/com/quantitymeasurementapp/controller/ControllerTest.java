@@ -5,10 +5,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.quantitymeasurementapp.dto.QuantityDTO;
-import com.quantitymeasurementapp.repository.QuantityMeasurementCacheRepository;
-import com.quantitymeasurementapp.service.IQuantityMeasurementService;
-import com.quantitymeasurementapp.service.QuantityMeasurementServiceImpl;
+import com.app.quantitymeasurementapp.controller.QuantityMeasurementController;
+import com.app.quantitymeasurementapp.entity.QuantityDTO;
+import com.app.quantitymeasurementapp.repository.QuantityMeasurementCacheRepository;
+import com.app.quantitymeasurementapp.service.IQuantityMeasurementService;
+import com.app.quantitymeasurementapp.service.QuantityMeasurementServiceImpl;
 
 public class ControllerTest {
 

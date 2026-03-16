@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.quantitymeasurementapp.quantity.Quantity;
+import com.app.quantitymeasurementapp.quantity.Quantity;
+import com.app.quantitymeasurementapp.unit.VolumeUnit;
 
 public class VolumeQuantityTest {
 
