@@ -17,7 +17,7 @@
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 
-		<junit.version>4.13.2</junit.version>
+		<junit.version>5.11.0</junit.version>
 		<h2.version>2.2.224</h2.version>
 	</properties>
 
@@ -37,15 +37,15 @@
 			<version>5.1.0</version>
 		</dependency>
 
-		<!-- JUnit Testing -->
+		<!-- JUnit 5 -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Mockito for Unit Testing -->
+		<!-- Mockito -->
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
@@ -66,20 +66,12 @@
 			<version>1.2.11</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter</artifactId>
-			<version>5.11.0</version>
-			<scope>test</scope>
-		</dependency>
-
 	</dependencies>
 
 	<build>
-
 		<plugins>
 
-			<!-- Maven Compiler -->
+			<!-- Compiler -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -90,28 +82,23 @@
 				</configuration>
 			</plugin>
 
-			<!-- Run Application -->
+			<!-- Run App -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>3.1.1</version>
 				<configuration>
 					<mainClass>
-						com.app.quantitymeasurement.QuantityMeasurementApp</mainClass>
+						com.app.quantitymeasurement.QuantityMeasurementApp
+					</mainClass>
 				</configuration>
 			</plugin>
 
-			<!-- Run Tests -->
+			<!-- JUnit 5 Test Runner -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.2</version>
-				<configuration>
-					<includes>
-						<include>**/*Test.java</include>
-						<include>**/*Tests.java</include>
-					</includes>
-				</configuration>
+				<version>3.3.0</version>
 			</plugin>
 
 			<!-- Fat JAR -->
@@ -130,19 +117,14 @@
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>
-										com.app.quantitymeasurement.QuantityMeasurementApp</mainClass>
+										com.app.quantitymeasurement.QuantityMeasurementApp
+									</mainClass>
 								</transformer>
 							</transformers>
 							<finalName>quantity-measurement-app-fat</finalName>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.3.0</version>
 			</plugin>
 
 		</plugins>

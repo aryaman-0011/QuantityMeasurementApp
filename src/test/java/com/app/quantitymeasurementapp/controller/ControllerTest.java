@@ -1,4 +1,4 @@
-package com.quantitymeasurementapp.controller;
+package com.app.quantitymeasurementapp.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 
