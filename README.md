@@ -317,3 +317,34 @@ Refactored the system to use a single generic class Quantity<U extends IMeasurab
   - `QuantityDTO(100, CELSIUS, TEMPERATURE).equals(QuantityDTO(212, FAHRENHEIT, TEMPERATURE)) → true`
 
 [UC15–Architecture Refactoring](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC15-N-Tier/src)
+
+---
+
+### 📅 UC16: Database Integration & Persistence Layer
+
+- Description: UC16 extends the N-Tier architecture by adding database persistence using JDBC and an H2 in-memory database. Measurement operations are now stored in the database, enabling audit tracking and improved scalability without changing the existing business logic.
+
+- Architecture:
+
+  - **Controller** – Receives requests and delegates operations to the service layer.
+  - **Service** – Handles measurement logic and conversions.
+  - **Repository** – Supports cache-based and database-based persistence.
+  - **Database** – Stores measurement results and audit history.
+  - **ConnectionPool** – Manages reusable JDBC connections.
+
+- Implementation:
+
+  - Added `QuantityMeasurementDatabaseRepository` for JDBC persistence.
+  - Introduced `ConnectionPool` for efficient database connection management.
+  - Created database tables:
+    - `quantity_measurement_entity`
+    - `quantity_measurement_history`
+  - Configured database properties in `application.properties`.
+  - Added SQL test scripts `test-db-schema.sql` and `test-data.sql`.
+
+- Example:
+
+  - `QuantityDTO(10, FEET, LENGTH) + QuantityDTO(24, INCHES, LENGTH) → QuantityDTO(12, FEET, LENGTH)`
+  - Operation result is stored in `quantity_measurement_entity` and tracked in `quantity_measurement_history`.
+
+[UC16 – Database Integration & Persistence](https://github.com/aryaman-0011/QuantityMeasurementApp/tree/feature/UC16-JDBCPersistence/src)
