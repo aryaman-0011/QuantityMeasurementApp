@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.qma</groupId>
+    <artifactId>qma-microservice-parent</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <name>qma-microservice-parent</name>
+    <description>Aggregator build for the QMA microservice system</description>
+
+    <modules>
+        <module>service-registry</module>
+        <module>admin-server</module>
+        <module>api-gateway</module>
+        <module>auth-service</module>
+        <module>user-service</module>
+        <module>quantity-service</module>
+        <module>history-service</module>
+    </modules>
+</project>
