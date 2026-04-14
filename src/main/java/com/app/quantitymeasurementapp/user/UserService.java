@@ -12,56 +12,89 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-	@Autowired
-	private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-	public User registerOrUpdateUser(OAuth2User oAuth2User) {
-		String googleId = oAuth2User.getAttribute("sub");
-		String email = oAuth2User.getAttribute("email");
-		String name = oAuth2User.getAttribute("name");
-		String pictureUrl = oAuth2User.getAttribute("picture");
+    public User registerOrUpdateUser(OAuth2User oAuth2User) {
+        String googleId = oAuth2User.getAttribute("sub");
+        String email = oAuth2User.getAttribute("email");
+        String name = oAuth2User.getAttribute("name");
+        String pictureUrl = oAuth2User.getAttribute("picture");
 
-		logger.info("OAuth2 login: email={}", email);
+        logger.info("OAuth2 login: email={}", email);
 
-		Optional<User> existingUser = userRepository.findByGoogleId(googleId);
+        Optional<User> existingUser = userRepository.findByGoogleId(googleId);
 
-		if (existingUser.isPresent()) {
-			User user = existingUser.get();
-			user.setName(name);
-			user.setPictureUrl(pictureUrl);
-			user.setLastLoginAt(LocalDateTime.now());
-			logger.info("Existing user logged in: {}", email);
-			return userRepository.save(user);
-		}
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            user.setName(name);
+            user.setPictureUrl(pictureUrl);
+            user.setLastLoginAt(LocalDateTime.now());
+            logger.info("Existing user logged in: {}", email);
+            return userRepository.save(user);
+        }
 
-		User newUser = User.builder().googleId(googleId).email(email).name(name).pictureUrl(pictureUrl)
-				.password("GOOGLE_OAUTH_USER").mobile(null).role(Role.USER).active(true)
-				.lastLoginAt(LocalDateTime.now()).build();
+        Optional<User> existingByEmail = userRepository.findByEmail(email);
+        if (existingByEmail.isPresent()) {
+            User user = existingByEmail.get();
+            user.setGoogleId(googleId);
+            user.setName(name);
+            user.setPictureUrl(pictureUrl);
+            user.setLastLoginAt(LocalDateTime.now());
+            user.setActive(true);
+            logger.info("Existing local user linked with Google login: {}", email);
+            return userRepository.save(user);
+        }
 
-		logger.info("New user registered: {}", email);
-		return userRepository.save(newUser);
-	}
+        User newUser = User.builder()
+                .googleId(googleId)
+                .email(email)
+                .name(name)
+                .pictureUrl(pictureUrl)
+                .password("GOOGLE_OAUTH_USER")
+                .mobile(null)
+                .role(Role.USER)
+                .active(true)
+                .lastLoginAt(LocalDateTime.now())
+                .build();
 
-	public User saveUser(User user) {
-		user.setGoogleId(null);
-		user.setPictureUrl(null);
-		user.setRole(Role.USER);
-		user.setActive(true);
-		user.setLastLoginAt(LocalDateTime.now());
-		return userRepository.save(user);
-	}
+        logger.info("New user registered: {}", email);
+        return userRepository.save(newUser);
+    }
 
-	public Optional<User> findByEmail(String email) {
-		return userRepository.findByEmail(email);
-	}
+    public User saveUser(User user) {
+        user.setGoogleId(null);
+        user.setPictureUrl(null);
+        user.setRole(Role.USER);
+        user.setActive(true);
+        user.setLastLoginAt(LocalDateTime.now());
+        return userRepository.save(user);
+    }
 
-	public Optional<User> findById(Long id) {
-		return userRepository.findById(id);
-	}
+    public User save(User user) {
+        return userRepository.save(user);
+    }
 
-	public java.util.List<User> getAllUsers() {
-		return userRepository.findAll();
-	}
+    public User updateLastLogin(User user) {
+        user.setLastLoginAt(LocalDateTime.now());
+        return userRepository.save(user);
+    }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    public java.util.List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
 }

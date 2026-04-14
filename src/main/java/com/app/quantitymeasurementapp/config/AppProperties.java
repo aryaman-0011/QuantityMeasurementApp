@@ -13,12 +13,13 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "app")
 public class AppProperties {
 
-	private Jwt jwt = new Jwt();
-	private String baseUrl = "http://localhost:8080";
+    private Jwt jwt = new Jwt();
+    private String baseUrl = "http://localhost:8080";
+    private String frontendBaseUrl = "http://localhost:4200";
 
-	@Data
-	public static class Jwt {
-		private String secret;
-		private long expirationMs = 86400000; // 24 hours
-	}
+    @Data
+    public static class Jwt {
+        private String secret;
+        private long expirationMs = 86400000; // 24 hours
+    }
 }

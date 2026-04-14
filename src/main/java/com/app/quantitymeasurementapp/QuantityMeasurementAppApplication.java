@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableConfigurationProperties(AppProperties.class)
-@OpenAPIDefinition(info = @Info(title = "Quantity Measurement API", version = "2.0.0", description = "UC18 — Google OAuth2 + JWT + User Management"))
+@OpenAPIDefinition(info = @Info(title = "Quantity Measurement API", version = "2.0.0"))
 public class QuantityMeasurementAppApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(QuantityMeasurementAppApplication.class, args);

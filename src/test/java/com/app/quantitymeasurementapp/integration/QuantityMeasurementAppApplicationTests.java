@@ -1,5 +1,6 @@
 package com.app.quantitymeasurementapp.integration;
 
+import com.app.quantitymeasurementapp.auth.AuthResponse;
 import com.app.quantitymeasurementapp.dto.QuantityDTO;
 import com.app.quantitymeasurementapp.dto.QuantityInputDTO;
 import com.app.quantitymeasurementapp.dto.QuantityMeasurementDTO;
@@ -51,6 +52,33 @@ class QuantityMeasurementAppApplicationTests {
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		return new HttpEntity<>(body, headers);
 	}
+
+	private HttpEntity<QuantityInputDTO> authJsonEntity(QuantityInputDTO body, String token) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setBearerAuth(token);
+		return new HttpEntity<>(body, headers);
+	}
+
+	private HttpEntity<Void> authEntity(String token) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setBearerAuth(token);
+		return new HttpEntity<>(headers);
+	}
+
+	private String registerAndGetToken(String emailPrefix) {
+		String email = emailPrefix + System.nanoTime() + "@example.com";
+		RegisterRequestWrapper request = new RegisterRequestWrapper("Test User", email, "Password@123", "9999999999");
+		ResponseEntity<AuthResponse> response = restTemplate.postForEntity(
+				"http://localhost:" + port + "/auth/register", request, AuthResponse.class);
+
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertNotNull(response.getBody().getToken());
+		return response.getBody().getToken();
+	}
+
+	private record RegisterRequestWrapper(String name, String email, String password, String mobile) {}
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// 1. Spring Boot Application context
@@ -279,28 +307,44 @@ class QuantityMeasurementAppApplicationTests {
 
 	@Test
 	@Order(15)
-	@DisplayName("testGetHistoryByOperation — after add call, history/operation/add is non-empty")
-	void testGetHistoryByOperation_AfterAddCall() {
-		// First persist an add operation
-		QuantityInputDTO input = new QuantityInputDTO(new QuantityDTO(5.0, "FEET", "LengthUnit"),
-				new QuantityDTO(12.0, "INCHES", "LengthUnit"));
-		restTemplate.postForEntity(baseUrl() + "/add", jsonEntity(input), QuantityMeasurementDTO.class);
+	@DisplayName("testGetHistoryByOperation — requires auth when not signed in")
+	void testGetHistoryByOperation_RequiresAuth() {
+		ResponseEntity<String> response = restTemplate.getForEntity(baseUrl() + "/history/operation/add", String.class);
 
-		ResponseEntity<List<QuantityMeasurementDTO>> response = restTemplate.exchange(
-				baseUrl() + "/history/operation/add", HttpMethod.GET, null,
-				new ParameterizedTypeReference<List<QuantityMeasurementDTO>>() {
-				});
-
-		assertEquals(HttpStatus.OK, response.getStatusCode());
-		assertFalse(response.getBody().isEmpty());
+		assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
 	}
 
 	@Test
 	@Order(16)
-	@DisplayName("testGetHistoryByMeasurementType — LengthUnit records returned")
-	void testGetHistoryByMeasurementType() {
+	@DisplayName("testGetHistoryByOperation — signed-in user sees own add history")
+	void testGetHistoryByOperation_ForAuthenticatedUser() {
+		String token = registerAndGetToken("history-add-");
+		QuantityInputDTO input = new QuantityInputDTO(new QuantityDTO(5.0, "FEET", "LengthUnit"),
+				new QuantityDTO(12.0, "INCHES", "LengthUnit"));
+		restTemplate.exchange(baseUrl() + "/add", HttpMethod.POST, authJsonEntity(input, token), QuantityMeasurementDTO.class);
+
 		ResponseEntity<List<QuantityMeasurementDTO>> response = restTemplate.exchange(
-				baseUrl() + "/history/type/LengthUnit", HttpMethod.GET, null,
+				baseUrl() + "/history/operation/add", HttpMethod.GET, authEntity(token),
+				new ParameterizedTypeReference<List<QuantityMeasurementDTO>>() {
+				});
+
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertFalse(response.getBody().isEmpty());
+		assertEquals("add", response.getBody().get(0).getOperation());
+	}
+
+	@Test
+	@Order(17)
+	@DisplayName("testGetHistoryByMeasurementType — signed-in user gets own LengthUnit records")
+	void testGetHistoryByMeasurementType() {
+		String token = registerAndGetToken("history-type-");
+		QuantityInputDTO input = new QuantityInputDTO(new QuantityDTO(2.0, "FEET", "LengthUnit"),
+				new QuantityDTO(12.0, "INCHES", "LengthUnit"));
+		restTemplate.exchange(baseUrl() + "/add", HttpMethod.POST, authJsonEntity(input, token), QuantityMeasurementDTO.class);
+
+		ResponseEntity<List<QuantityMeasurementDTO>> response = restTemplate.exchange(
+				baseUrl() + "/history/type/LengthUnit", HttpMethod.GET, authEntity(token),
 				new ParameterizedTypeReference<List<QuantityMeasurementDTO>>() {
 				});
 
@@ -309,29 +353,36 @@ class QuantityMeasurementAppApplicationTests {
 	}
 
 	@Test
-	@Order(17)
-	@DisplayName("testGetOperationCount — count for compare is a non-negative long")
+	@Order(18)
+	@DisplayName("testGetOperationCount — signed-in user count is a non-negative long")
 	void testGetOperationCount() {
-		ResponseEntity<Long> response = restTemplate.getForEntity(baseUrl() + "/count/compare", Long.class);
+		String token = registerAndGetToken("history-count-");
+		QuantityInputDTO input = new QuantityInputDTO(new QuantityDTO(1.0, "FEET", "LengthUnit"),
+				new QuantityDTO(12.0, "INCHES", "LengthUnit"));
+		restTemplate.exchange(baseUrl() + "/compare", HttpMethod.POST, authJsonEntity(input, token), QuantityMeasurementDTO.class);
+
+		ResponseEntity<Long> response = restTemplate.exchange(baseUrl() + "/count/compare", HttpMethod.GET,
+				authEntity(token), Long.class);
 
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 		assertTrue(response.getBody() >= 0L);
 	}
 
 	@Test
-	@Order(18)
-	@DisplayName("testGetErrorHistory — returns error records after bad request")
+	@Order(19)
+	@DisplayName("testGetErrorHistory — signed-in user gets own error records")
 	void testGetErrorHistory_AfterBadRequest() {
-		// Trigger an error by adding incompatible types
+		String token = registerAndGetToken("history-error-");
 		QuantityInputDTO input = new QuantityInputDTO(new QuantityDTO(1.0, "FEET", "LengthUnit"),
 				new QuantityDTO(1.0, "KILOGRAM", "WeightUnit"));
-		restTemplate.postForEntity(baseUrl() + "/add", jsonEntity(input), String.class);
+		restTemplate.exchange(baseUrl() + "/add", HttpMethod.POST, authJsonEntity(input, token), String.class);
 
 		ResponseEntity<List<QuantityMeasurementDTO>> response = restTemplate.exchange(baseUrl() + "/history/errored",
-				HttpMethod.GET, null, new ParameterizedTypeReference<List<QuantityMeasurementDTO>>() {
+				HttpMethod.GET, authEntity(token), new ParameterizedTypeReference<List<QuantityMeasurementDTO>>() {
 				});
 
 		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertNotNull(response.getBody());
 		assertFalse(response.getBody().isEmpty());
 		assertTrue(response.getBody().get(0).isError());
 	}
@@ -341,7 +392,7 @@ class QuantityMeasurementAppApplicationTests {
 	// ═══════════════════════════════════════════════════════════════════════
 
 	@Test
-	@Order(19)
+	@Order(20)
 	@DisplayName("testH2DatabasePersistence — entity saved via JPA is retrievable")
 	void testH2DatabasePersistence() {
 		QuantityMeasurementEntity entity = new QuantityMeasurementEntity(99.0, "FEET", "LengthUnit", 1.0, "INCHES",
@@ -353,7 +404,7 @@ class QuantityMeasurementAppApplicationTests {
 	}
 
 	@Test
-	@Order(20)
+	@Order(21)
 	@DisplayName("testJPARepositoryFindByOperation — finds correct entities")
 	void testJPARepositoryFindByOperation() {
 		QuantityMeasurementEntity entity = new QuantityMeasurementEntity(1.0, "FEET", "LengthUnit", 2.0, "FEET",
@@ -367,7 +418,7 @@ class QuantityMeasurementAppApplicationTests {
 	}
 
 	@Test
-	@Order(21)
+	@Order(22)
 	@DisplayName("testJPARepositoryFindErrorTrue — finds only error records")
 	void testJPARepositoryFindErrorTrue() {
 		QuantityMeasurementEntity errEntity = new QuantityMeasurementEntity(1.0, "FEET", "LengthUnit", 1.0, "KILOGRAM",
@@ -381,7 +432,7 @@ class QuantityMeasurementAppApplicationTests {
 	}
 
 	@Test
-	@Order(22)
+	@Order(23)
 	@DisplayName("testJPARepositoryCountByOperation — correct count returned")
 	void testJPARepositoryCountByOperation() {
 		long before = repository.countByOperationAndErrorFalse("compare");
@@ -399,7 +450,7 @@ class QuantityMeasurementAppApplicationTests {
 	// ═══════════════════════════════════════════════════════════════════════
 
 	@Test
-	@Order(23)
+	@Order(24)
 	@DisplayName("testActuatorHealthEndpoint — returns UP")
 	void testActuatorHealthEndpoint() {
 		ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:" + port + "/actuator/health",
@@ -410,7 +461,7 @@ class QuantityMeasurementAppApplicationTests {
 	}
 
 	@Test
-	@Order(24)
+	@Order(25)
 	@DisplayName("testActuatorMetricsEndpoint — metrics endpoint accessible")
 	void testActuatorMetricsEndpoint() {
 		// /actuator/metrics lists metric names — use /actuator/health instead
@@ -427,7 +478,7 @@ class QuantityMeasurementAppApplicationTests {
 	// ═══════════════════════════════════════════════════════════════════════
 
 	@Test
-	@Order(25)
+	@Order(26)
 	@DisplayName("testIntegrationTest_MultipleOperations — all persist to DB")
 	void testIntegrationTest_MultipleOperations() {
 		long before = repository.count();
@@ -459,7 +510,7 @@ class QuantityMeasurementAppApplicationTests {
 	// ═══════════════════════════════════════════════════════════════════════
 
 	@Test
-	@Order(26)
+	@Order(27)
 	@DisplayName("testHttpStatusCodes_Success — successful ops return 200")
 	void testHttpStatusCodes_Success() {
 		QuantityInputDTO input = new QuantityInputDTO(new QuantityDTO(1.0, "FEET", "LengthUnit"),
@@ -471,7 +522,7 @@ class QuantityMeasurementAppApplicationTests {
 	}
 
 	@Test
-	@Order(27)
+	@Order(28)
 	@DisplayName("testHttpStatusCodes_ClientError — invalid measurement type returns 400")
 	void testHttpStatusCodes_ClientError_InvalidMeasurementType() {
 		// measurementType fails @Pattern validation
@@ -487,7 +538,7 @@ class QuantityMeasurementAppApplicationTests {
 	// ═══════════════════════════════════════════════════════════════════════
 
 	@Test
-	@Order(28)
+	@Order(29)
 	@DisplayName("backwardCompatibility — 1 YARD == 3 FEET (UC4 result preserved)")
 	void testBackwardCompatibility_YardEquality() {
 		QuantityInputDTO input = new QuantityInputDTO(new QuantityDTO(1.0, "YARD", "LengthUnit"),
@@ -501,7 +552,7 @@ class QuantityMeasurementAppApplicationTests {
 	}
 
 	@Test
-	@Order(29)
+	@Order(30)
 	@DisplayName("backwardCompatibility — 1 KG == 1000 GRAM (UC9 result preserved)")
 	void testBackwardCompatibility_WeightEquality() {
 		QuantityInputDTO input = new QuantityInputDTO(new QuantityDTO(1.0, "KILOGRAM", "WeightUnit"),
@@ -515,7 +566,7 @@ class QuantityMeasurementAppApplicationTests {
 	}
 
 	@Test
-	@Order(30)
+	@Order(31)
 	@DisplayName("backwardCompatibility — 1 LITRE == 1000 ML (UC11 result preserved)")
 	void testBackwardCompatibility_VolumeEquality() {
 		QuantityInputDTO input = new QuantityInputDTO(new QuantityDTO(1.0, "LITRE", "VolumeUnit"),

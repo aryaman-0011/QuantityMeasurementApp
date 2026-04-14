@@ -18,7 +18,8 @@ import java.time.LocalDateTime;
 @Table(name = "quantity_measurement_entity", indexes = { @Index(name = "idx_operation", columnList = "operation"),
 		@Index(name = "idx_mtype", columnList = "this_measurement_type"),
 		@Index(name = "idx_is_error", columnList = "is_error"),
-		@Index(name = "idx_created_at", columnList = "created_at") })
+		@Index(name = "idx_created_at", columnList = "created_at"),
+		@Index(name = "idx_user_id", columnList = "user_id") })
 @EntityListeners(AuditingEntityListener.class)
 @Data
 @NoArgsConstructor
@@ -28,6 +29,12 @@ public class QuantityMeasurementEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@Column(name = "user_id")
+	private Long userId;
+
+	@Column(name = "user_email", length = 255)
+	private String userEmail;
 
 	// ── First operand ─────────────────────────────────────────────────────
 	@Column(name = "this_value", nullable = false)
@@ -82,13 +89,28 @@ public class QuantityMeasurementEntity {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
+
+	/**
+	 * Backward-compatible convenience constructor used by older DTO/tests that do
+	 * not populate user ownership fields.
+	 */
+	public QuantityMeasurementEntity(double thisValue, String thisUnit, String thisMeasurementType,
+			Double thatValue, String thatUnit, String thatMeasurementType, String operation, Double resultValue,
+			String resultUnit, String resultMeasurementType, String resultString, boolean error, String errorMessage) {
+
+		this(null, null, thisValue, thisUnit, thisMeasurementType, thatValue, thatUnit, thatMeasurementType,
+				operation, resultValue, resultUnit, resultMeasurementType, resultString, error, errorMessage);
+	}
+
 	/**
 	 * Convenience constructor (without id and audit fields) used by service layer.
 	 */
-	public QuantityMeasurementEntity(double thisValue, String thisUnit, String thisMeasurementType, Double thatValue,
-			String thatUnit, String thatMeasurementType, String operation, Double resultValue, String resultUnit,
-			String resultMeasurementType, String resultString, boolean error, String errorMessage) {
+	public QuantityMeasurementEntity(Long userId, String userEmail, double thisValue, String thisUnit, String thisMeasurementType,
+			Double thatValue, String thatUnit, String thatMeasurementType, String operation, Double resultValue,
+			String resultUnit, String resultMeasurementType, String resultString, boolean error, String errorMessage) {
 
+		this.userId = userId;
+		this.userEmail = userEmail;
 		this.thisValue = thisValue;
 		this.thisUnit = thisUnit;
 		this.thisMeasurementType = thisMeasurementType;

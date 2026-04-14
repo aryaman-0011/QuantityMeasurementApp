@@ -47,7 +47,7 @@ class QuantityMeasurementServiceImplTest {
         QuantityDTO q1 = new QuantityDTO(10.0, "FEET",   "LENGTH");
         QuantityDTO q2 = new QuantityDTO(24.0, "INCHES", "LENGTH");
 
-        QuantityMeasurementDTO result = service.add(q1, q2);
+        QuantityMeasurementDTO result = service.add(q1, q2, null, null);
 
         assertEquals("add", result.getOperation());
         assertEquals(12.0, result.getResultValue(), 0.01);
@@ -62,7 +62,7 @@ class QuantityMeasurementServiceImplTest {
         QuantityDTO q1 = new QuantityDTO(2.0,   "KILOGRAM", "WEIGHT");
         QuantityDTO q2 = new QuantityDTO(500.0, "GRAM",     "WEIGHT");
 
-        QuantityMeasurementDTO result = service.add(q1, q2);
+        QuantityMeasurementDTO result = service.add(q1, q2, null, null);
 
         assertEquals(2.5, result.getResultValue(), 0.01);
         assertFalse(result.isError());
@@ -74,7 +74,7 @@ class QuantityMeasurementServiceImplTest {
         QuantityDTO q1 = new QuantityDTO(1.0,   "LITRE",      "VOLUME");
         QuantityDTO q2 = new QuantityDTO(500.0, "MILLILITRE", "VOLUME");
 
-        QuantityMeasurementDTO result = service.add(q1, q2);
+        QuantityMeasurementDTO result = service.add(q1, q2, null, null);
 
         assertEquals(1.5, result.getResultValue(), 0.01);
     }
@@ -85,7 +85,7 @@ class QuantityMeasurementServiceImplTest {
         QuantityDTO q1 = new QuantityDTO(1.0, "FEET",     "LENGTH");
         QuantityDTO q2 = new QuantityDTO(1.0, "KILOGRAM", "WEIGHT");
 
-        assertThrows(QuantityMeasurementException.class, () -> service.add(q1, q2));
+        assertThrows(QuantityMeasurementException.class, () -> service.add(q1, q2, null, null));
         verify(repository, times(1)).save(any());
     }
 
@@ -95,7 +95,7 @@ class QuantityMeasurementServiceImplTest {
         QuantityDTO q1 = new QuantityDTO(100.0, "CELSIUS", "TEMPERATURE");
         QuantityDTO q2 = new QuantityDTO(50.0,  "CELSIUS", "TEMPERATURE");
 
-        assertThrows(QuantityMeasurementException.class, () -> service.add(q1, q2));
+        assertThrows(QuantityMeasurementException.class, () -> service.add(q1, q2, null, null));
         verify(repository, times(1)).save(any());
     }
 
@@ -108,7 +108,7 @@ class QuantityMeasurementServiceImplTest {
         ArgumentCaptor<QuantityMeasurementEntity> captor =
                 ArgumentCaptor.forClass(QuantityMeasurementEntity.class);
 
-        assertThrows(QuantityMeasurementException.class, () -> service.add(q1, q2));
+        assertThrows(QuantityMeasurementException.class, () -> service.add(q1, q2, null, null));
 
         verify(repository).save(captor.capture());
         assertTrue(captor.getValue().isError());
@@ -125,7 +125,7 @@ class QuantityMeasurementServiceImplTest {
         QuantityDTO q1 = new QuantityDTO(4.0,  "FEET",   "LENGTH");
         QuantityDTO q2 = new QuantityDTO(24.0, "INCHES", "LENGTH");
 
-        QuantityMeasurementDTO result = service.subtract(q1, q2);
+        QuantityMeasurementDTO result = service.subtract(q1, q2, null, null);
 
         assertEquals(2.0, result.getResultValue(), 0.01);
         assertEquals("subtract", result.getOperation());
@@ -138,7 +138,7 @@ class QuantityMeasurementServiceImplTest {
         QuantityDTO q1 = new QuantityDTO(2.0,   "KILOGRAM", "WEIGHT");
         QuantityDTO q2 = new QuantityDTO(500.0, "GRAM",     "WEIGHT");
 
-        QuantityMeasurementDTO result = service.subtract(q1, q2);
+        QuantityMeasurementDTO result = service.subtract(q1, q2, null, null);
 
         assertEquals(1.5, result.getResultValue(), 0.01);
     }
@@ -153,7 +153,7 @@ class QuantityMeasurementServiceImplTest {
         QuantityDTO q1 = new QuantityDTO(10.0, "FEET", "LENGTH");
         QuantityDTO q2 = new QuantityDTO(2.0,  "FEET", "LENGTH");
 
-        QuantityMeasurementDTO result = service.divide(q1, q2);
+        QuantityMeasurementDTO result = service.divide(q1, q2, null, null);
 
         assertEquals(5.0, result.getResultValue(), 0.001);
         assertEquals("RATIO", result.getResultUnit());
@@ -165,7 +165,7 @@ class QuantityMeasurementServiceImplTest {
         QuantityDTO q1 = new QuantityDTO(5.0,   "LITRE",      "VOLUME");
         QuantityDTO q2 = new QuantityDTO(500.0, "MILLILITRE", "VOLUME");
 
-        QuantityMeasurementDTO result = service.divide(q1, q2);
+        QuantityMeasurementDTO result = service.divide(q1, q2, null, null);
 
         assertEquals(10.0, result.getResultValue(), 0.001);
     }
@@ -176,7 +176,7 @@ class QuantityMeasurementServiceImplTest {
         QuantityDTO q1 = new QuantityDTO(1.0, "FEET",   "LENGTH");
         QuantityDTO q2 = new QuantityDTO(0.0, "INCHES", "LENGTH");
 
-        assertThrows(ArithmeticException.class, () -> service.divide(q1, q2));
+        assertThrows(ArithmeticException.class, () -> service.divide(q1, q2, null, null));
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -188,7 +188,7 @@ class QuantityMeasurementServiceImplTest {
     void testConvert_FeetToInches_ReturnsCorrectValue() {
         QuantityDTO q = new QuantityDTO(1.0, "FEET", "LENGTH");
 
-        QuantityMeasurementDTO result = service.convert(q, "INCHES");
+        QuantityMeasurementDTO result = service.convert(q, "INCHES", null, null);
 
         assertEquals(12.0, result.getResultValue(), 0.01);
         assertEquals("INCHES", result.getResultUnit());
@@ -199,7 +199,7 @@ class QuantityMeasurementServiceImplTest {
     void testConvert_CelsiusToFahrenheit_ReturnsCorrectValue() {
         QuantityDTO q = new QuantityDTO(100.0, "CELSIUS", "TEMPERATURE");
 
-        QuantityMeasurementDTO result = service.convert(q, "FAHRENHEIT");
+        QuantityMeasurementDTO result = service.convert(q, "FAHRENHEIT", null, null);
 
         assertEquals(212.0, result.getResultValue(), 0.01);
     }
@@ -209,7 +209,7 @@ class QuantityMeasurementServiceImplTest {
     void testConvert_GallonToLitre_ReturnsApproximateValue() {
         QuantityDTO q = new QuantityDTO(1.0, "GALLON", "VOLUME");
 
-        QuantityMeasurementDTO result = service.convert(q, "LITRE");
+        QuantityMeasurementDTO result = service.convert(q, "LITRE", null, null);
 
         assertEquals(3.79, result.getResultValue(), 0.01);
     }
@@ -219,7 +219,7 @@ class QuantityMeasurementServiceImplTest {
     void testConvert_CelsiusToKelvin() {
         QuantityDTO q = new QuantityDTO(0.0, "CELSIUS", "TEMPERATURE");
 
-        QuantityMeasurementDTO result = service.convert(q, "KELVIN");
+        QuantityMeasurementDTO result = service.convert(q, "KELVIN", null, null);
 
         assertEquals(273.15, result.getResultValue(), 0.01);
     }
@@ -230,7 +230,7 @@ class QuantityMeasurementServiceImplTest {
         QuantityDTO q = new QuantityDTO(1.0, "FEET", "LENGTH");
 
         assertThrows(QuantityMeasurementException.class,
-                () -> service.convert(q, "INVALID_UNIT"));
+                () -> service.convert(q, "INVALID_UNIT", null, null));
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -243,7 +243,7 @@ class QuantityMeasurementServiceImplTest {
         QuantityDTO q1 = new QuantityDTO(1.0,  "FEET",   "LENGTH");
         QuantityDTO q2 = new QuantityDTO(12.0, "INCHES", "LENGTH");
 
-        QuantityMeasurementDTO result = service.compare(q1, q2);
+        QuantityMeasurementDTO result = service.compare(q1, q2, null, null);
 
         assertEquals("true", result.getResultString());
         assertFalse(result.isError());
@@ -255,7 +255,7 @@ class QuantityMeasurementServiceImplTest {
         QuantityDTO q1 = new QuantityDTO(100.0, "CELSIUS",    "TEMPERATURE");
         QuantityDTO q2 = new QuantityDTO(212.0, "FAHRENHEIT", "TEMPERATURE");
 
-        QuantityMeasurementDTO result = service.compare(q1, q2);
+        QuantityMeasurementDTO result = service.compare(q1, q2, null, null);
 
         assertEquals("true", result.getResultString());
     }
@@ -266,7 +266,7 @@ class QuantityMeasurementServiceImplTest {
         QuantityDTO q1 = new QuantityDTO(1.0, "FEET", "LENGTH");
         QuantityDTO q2 = new QuantityDTO(2.0, "FEET", "LENGTH");
 
-        QuantityMeasurementDTO result = service.compare(q1, q2);
+        QuantityMeasurementDTO result = service.compare(q1, q2, null, null);
 
         assertEquals("false", result.getResultString());
     }
@@ -277,7 +277,7 @@ class QuantityMeasurementServiceImplTest {
         QuantityDTO q1 = new QuantityDTO(1.0,    "KILOGRAM", "WEIGHT");
         QuantityDTO q2 = new QuantityDTO(1000.0, "GRAM",     "WEIGHT");
 
-        QuantityMeasurementDTO result = service.compare(q1, q2);
+        QuantityMeasurementDTO result = service.compare(q1, q2, null, null);
 
         assertEquals("true", result.getResultString());
     }
@@ -293,33 +293,33 @@ class QuantityMeasurementServiceImplTest {
             1.0, "FEET", "LengthUnit", 12.0, "INCHES", "LengthUnit",
             "add", 2.0, "FEET", "LengthUnit", "Quantity(2.0, FEET)", false, null
         );
-        when(repository.findByOperation("add")).thenReturn(List.of(entity));
+        when(repository.findByUserIdAndOperationOrderByCreatedAtDesc(7L, "add")).thenReturn(List.of(entity));
 
-        List<QuantityMeasurementDTO> result = service.getHistoryByOperation("add");
+        List<QuantityMeasurementDTO> result = service.getHistoryByOperation(7L, "add");
 
         assertEquals(1, result.size());
         assertEquals("add", result.get(0).getOperation());
-        verify(repository).findByOperation("add");
+        verify(repository).findByUserIdAndOperationOrderByCreatedAtDesc(7L, "add");
     }
 
     @Test
     @DisplayName("getHistoryByMeasurementType — returns entities for given type")
     void testGetHistoryByMeasurementType() {
-        when(repository.findByThisMeasurementType("LengthUnit"))
+        when(repository.findByUserIdAndThisMeasurementTypeOrderByCreatedAtDesc(7L, "LengthUnit"))
                 .thenReturn(List.of());
 
-        List<QuantityMeasurementDTO> result = service.getHistoryByMeasurementType("LengthUnit");
+        List<QuantityMeasurementDTO> result = service.getHistoryByMeasurementType(7L, "LengthUnit");
 
         assertNotNull(result);
-        verify(repository).findByThisMeasurementType("LengthUnit");
+        verify(repository).findByUserIdAndThisMeasurementTypeOrderByCreatedAtDesc(7L, "LengthUnit");
     }
 
     @Test
     @DisplayName("getOperationCount — returns count from repository")
     void testGetOperationCount_ReturnsCorrectCount() {
-        when(repository.countByOperationAndErrorFalse("compare")).thenReturn(5L);
+        when(repository.countByUserIdAndOperationAndErrorFalse(7L, "compare")).thenReturn(5L);
 
-        long count = service.getOperationCount("compare");
+        long count = service.getOperationCount(7L, "compare");
 
         assertEquals(5L, count);
     }
@@ -332,9 +332,9 @@ class QuantityMeasurementServiceImplTest {
             "add", null, null, null, null, true,
             "Cannot perform arithmetic between different measurement categories"
         );
-        when(repository.findByErrorTrue()).thenReturn(List.of(errEntity));
+        when(repository.findByUserIdAndErrorTrueOrderByCreatedAtDesc(7L)).thenReturn(List.of(errEntity));
 
-        List<QuantityMeasurementDTO> errors = service.getErrorHistory();
+        List<QuantityMeasurementDTO> errors = service.getErrorHistory(7L);
 
         assertEquals(1, errors.size());
         assertTrue(errors.get(0).isError());

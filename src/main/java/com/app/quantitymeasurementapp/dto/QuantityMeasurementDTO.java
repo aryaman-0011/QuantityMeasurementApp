@@ -95,9 +95,9 @@ public class QuantityMeasurementDTO {
 	 * Convert this DTO back to a JPA entity (for saving).
 	 */
 	public QuantityMeasurementEntity toEntity() {
-		return new QuantityMeasurementEntity(thisValue, thisUnit, thisMeasurementType, thatValue, thatUnit,
-				thatMeasurementType, operation, resultValue, resultUnit, resultMeasurementType, resultString, error,
-				errorMessage);
+		return new QuantityMeasurementEntity(null, null, thisValue, thisUnit, thisMeasurementType, thatValue,
+				thatUnit, thatMeasurementType, operation, resultValue, resultUnit, resultMeasurementType,
+				resultString, error, errorMessage);
 	}
 
 	/**
